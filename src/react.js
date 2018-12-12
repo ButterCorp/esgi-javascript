@@ -1,13 +1,19 @@
 (() => {
-    function anElement(element, children) {
-      if (typeof(element) === 'function') {
-        return element();
+function anElement(element, children) {
+  if (typeof(element) === 'function') {
+    return element();
+  } else {
+    const anElement = document.createElement(element);
+    children.forEach(child => {
+      if (typeof(child) === 'object') {
+        anElement.appendChild(child);
       } else {
-        const anElement = document.createElement(element);
-        anElement.innerHTML = children.join(' ');
-        return anElement;
+        anElement.innerHTML += child;
       }
-    }
+    });
+    return anElement;
+  }
+}
   
     function createElement(el, props, ...children) {
       return anElement(el, children);
