@@ -1,8 +1,12 @@
 (() => {
     function anElement(element, children) {
-      const anElement = document.createElement(element);
-      anElement.innerHTML = children.join(' ');
-      return anElement;
+      if (typeof(element) === 'function') {
+        return element();
+      } else {
+        const anElement = document.createElement(element);
+        anElement.innerHTML = children.join(' ');
+        return anElement;
+      }
     }
   
     function createElement(el, props, ...children) {
