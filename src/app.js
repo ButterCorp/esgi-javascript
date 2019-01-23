@@ -1,4 +1,22 @@
-const myButtonComponents = require('/components/myButtonComponents.js').default;
+//const MyButtonComponents = require('./components/MyButtonComponent.js').default;
+//const Hello = require('./components/HelloComponent.js').default;
 
-const myBtn = React.createElement(myButtonComponents, {onClick: () => alert('yay it worked')}, null);
-ReactDOM.render(myBtn, document.getElementById('root'));
+//const HelloComponent = require('./components/HelloComponent.js').default;
+
+//import HelloComponent from "./components/HelloComponent.js";
+
+export default class HelloComponent extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return React.createElement('div', null, `Hello ${this.props.name}`);
+  }
+}
+
+let hello = new HelloComponent();
+
+const helloWorld = React.createElement(hello, {name: 'lolerki'}, null);
+ReactDOM.render(helloWorld, document.getElementById('root'));
