@@ -59,5 +59,5 @@ ReactDOM.render(myBtn, document.getElementById('root'));
 
 ReactDOM.render(React.createElement(Root, null, null), document.getElementById('root'));
 
-const helloWorld = React.createElement(Hello, {name: 'Ofir'}, null);
+const helloWorld = React.createElement(Hello, {name: 'lolerki'}, null);
 ReactDOM.render(helloWorld, document.getElementById('root'));
