@@ -1,22 +1,21 @@
 (() => {
-  function anElement(element, children) {
-    if (typeof(element) === 'function') {
-      return element();
+  let rootDOMElement, rootReactElement;
+  const classMap = {};
+  let classCounter = 0;
+  const REACT_CLASS = 'REACT_CLASS';
+
+  function anElement(element, props, children) {
+    if (isClass(element)) {
+      return handleClass(element, props, children);
+    } else if (isStateLessComponent(element)) {
+      return element(props);
     } else {
-      const anElement = document.createElement(element);
-      children.forEach(child => {
-        if (typeof(child) === 'object') {
-          anElement.appendChild(child);
-        } else {
-          anElement.innerHTML += child;
-        }
-      });
-      return anElement;
+      return handleHtmlElement(element, props, children);
     }
   }
 
   function createElement(el, props, ...children) {
-    return anElement(el, children);
+    return anElement(el, props, children);
   }
 
   function handleClass(clazz, props, children) {
@@ -33,26 +32,32 @@
 
   function handleHtmlElement(element, props, children) {
     const anElement = document.createElement(element);
-    
-    children.forEach(child => {
-      if (typeof(child) === 'object') {
-        anElement.appendChild(child);
-      } else {
-        anElement.innerHTML += child;
-      }
-    });
-    Object.keys(props).forEach(propName => {
-      if (/^on.*$/.test(propName)) {
-        anElement.addEventListener(propName.substring(2).toLowerCase(), props[propName]);
-      } else {
-        anElement.setAttribute(propName, props[propName]);
-      }
-    });
+    children.forEach(child => appendChild(anElement, child));
+    _.forEach(props, (value, name) => appendProp(anElement, name, value));
     return anElement;
   }
 
-  class Component {
+  function appendChild(element, child) {
+    if (child.type === REACT_CLASS) {
+      appendChild(element, child.render());
+    } else if (Array.isArray(child)) {
+      child.forEach(ch => appendChild(element, ch));
+    } else if (typeof(child) === 'object') {
+      element.appendChild(child);
+    } else {
+      element.innerHTML += child;
+    }
+  }
 
+  function appendProp(element, propName, propVal) {
+    if (shouldAddEventListener(propName)) {
+      element.addEventListener(propName.substring(2).toLowerCase(), propVal);
+    } else {
+      element.setAttribute(propName, propVal);
+    }
+  }
+
+  class Component {
     constructor(props) {
       this.props = props;
     }
@@ -63,14 +68,25 @@
     }
   }
 
+  function reRender() {
+    while (rootDOMElement.hasChildNodes()) {
+      rootDOMElement.removeChild(rootDOMElement.lastChild);
+    }
+    //Skip the root. It is only rendered once.
+    classCounter = 1;
+    ReactDOM.render(rootReactElement, rootDOMElement);
+  }
+
   window.React = {
     createElement,
     Component
   };
-
   window.ReactDOM = {
     render: (el, domEl) => {
-      domEl.appendChild(el);
+      rootReactElement = el;
+      rootDOMElement = domEl;
+      const currentDOM = rootReactElement.render();
+      rootDOMElement.appendChild(currentDOM);
     }
   };
 })();
