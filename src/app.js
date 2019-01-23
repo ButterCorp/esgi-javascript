@@ -5,7 +5,7 @@
 
 //import HelloComponent from "./components/HelloComponent.js";
 
-export default class HelloComponent extends React.Component {
+class HelloComponent extends React.Component {
 
   constructor(props) {
     super(props);

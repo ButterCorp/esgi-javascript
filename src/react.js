@@ -1,25 +1,39 @@
 (() => {
-  function anElement(element, props, children) {
-    if (isClass(element)) {
-      return handleClass(element, props);
-    } else if (isStateLessComponent(element)) {
-      return element(props);
+  function anElement(element, children) {
+    if (typeof(element) === 'function') {
+      return element();
     } else {
-      return handleHtmlElement(element, props, children);
+      const anElement = document.createElement(element);
+      children.forEach(child => {
+        if (typeof(child) === 'object') {
+          anElement.appendChild(child);
+        } else {
+          anElement.innerHTML += child;
+        }
+      });
+      return anElement;
     }
   }
 
   function createElement(el, props, ...children) {
-    return anElement(el, props, children);
+    return anElement(el, children);
   }
 
-  function handleClass(clazz, props) {
-    const component = new clazz(props);
-    return component.render();
+  function handleClass(clazz, props, children) {
+    classCounter++;
+    if (classMap[classCounter]) {
+      return classMap[classCounter];
+    }
+    const reactElement = new clazz(props);
+    reactElement.children = children;
+    reactElement.type = REACT_CLASS;
+    classMap[classCounter] = reactElement;
+    return reactElement;
   }
 
   function handleHtmlElement(element, props, children) {
     const anElement = document.createElement(element);
+    
     children.forEach(child => {
       if (typeof(child) === 'object') {
         anElement.appendChild(child);
@@ -38,8 +52,14 @@
   }
 
   class Component {
+
     constructor(props) {
       this.props = props;
+    }
+
+    setState(state) {
+      this.state = Object.assign({}, this.state, state);
+      reRender();
     }
   }
 
@@ -47,6 +67,7 @@
     createElement,
     Component
   };
+
   window.ReactDOM = {
     render: (el, domEl) => {
       domEl.appendChild(el);
