@@ -54,10 +54,10 @@ class MyButton extends React.Component {
 }
 
 const myBtn = React.createElement(MyButton, {onClick: () => alert('yay it worked')}, null);
-ReactDOM.render(myBtn, document.getElementById('root'));
+ReactDOM.render(myBtn, document.getElementById('button'));
 
 
-ReactDOM.render(React.createElement(Root, null, null), document.getElementById('root'));
+ReactDOM.render(React.createElement(Root, null, null), document.getElementById('count'));
 
 const helloWorld = React.createElement(Hello, {name: 'lolerki'}, null);
-ReactDOM.render(helloWorld, document.getElementById('root'));
+ReactDOM.render(helloWorld, document.getElementById('name'));
