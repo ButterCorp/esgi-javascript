@@ -8,7 +8,7 @@ const Title = ({ todoCount }) => {
       React.createElement(
         "h1",
         null,
-        "To-do (",
+        "To-do list(",
         todoCount,
         ")"
       )
@@ -30,7 +30,7 @@ const TodoForm = ({ addTodo }) => {
     React.createElement("input", { className: "form-control col-md-12", ref: node => {
       input = node;
     } }),
-    React.createElement("br", null)
+    React.createElement("br")
   );
 };
 
@@ -68,7 +68,7 @@ class TodoApp extends React.Component {
     this.state = {
       data: []
     };
-    this.apiUrl = 'https://57b1924b46b57d1100a3c3f8.mockapi.io/api/todos';
+    this.apiUrl = 'https://5c4a46c194e8a70014b333cb.mockapi.io/api/todo';
     axios.get(this.apiUrl).then(res => {
       // Set state with result
       this.setState({ data: res.data });
