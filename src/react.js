@@ -1,7 +1,21 @@
 (() => {
+  let rootDOMElement, rootReactElement;
+  const classMap = {};
+  let classCounter = 0;
+  const REACT_CLASS = 'REACT_CLASS';
+
+  /**
+   * Check le type d'élément injecté :
+   * Si c'est une classe on appelle la méthode HandleClass
+   * Si l'élément est Stateless on transmet directement ses props
+   * S'il est Stateful : on appelle la méthode HandleHtmlElement
+   * @param element 
+   * @param props 
+   * @param children 
+   */
   function anElement(element, props, children) {
     if (isClass(element)) {
-      return handleClass(element, props);
+      return handleClass(element, props, children);
     } else if (isStateLessComponent(element)) {
       return element(props);
     } else {
@@ -9,38 +23,113 @@
     }
   }
 
+  function type_check_v1(object, type) {
+    return typeof object === type;
+  }
+
+  function type_check_v2(object, type_object) {
+      var ok = true;
+      if (!type_check_v1(type_object.value, "undefined")) {
+          if (object != type_object.value) {
+              ok = false
+          }
+      }
+      if (!type_check_v1(type_object.type, "undefined")) {
+          if (!type_check_v1(object, type_object.type)) {
+              ok = false
+          }
+      }
+      if (!type_check_v1(type_object.enum, "undefined")) {
+          if (type_object.enum.indexOf(object) == -1) {
+              ok = false
+          }
+      }
+      return ok;
+  }
   function createElement(el, props, ...children) {
     return anElement(el, props, children);
   }
 
-  function handleClass(clazz, props) {
-    const component = new clazz(props);
-    return component.render();
+  function handleClass(clazz, props, children) {
+    classCounter++;
+    if (classMap[classCounter]) {
+      return classMap[classCounter];
+    }
+    const reactElement = new clazz(props);
+    reactElement.children = children;
+    reactElement.type = REACT_CLASS;
+    classMap[classCounter] = reactElement;
+    return reactElement;
   }
 
+  /**
+   * Tous 
+   * @param element 
+   * @param props 
+   * @param children 
+   */
   function handleHtmlElement(element, props, children) {
     const anElement = document.createElement(element);
-    children.forEach(child => {
-      if (typeof(child) === 'object') {
-        anElement.appendChild(child);
-      } else {
-        anElement.innerHTML += child;
-      }
-    });
-    Object.keys(props).forEach(propName => {
-      if (/^on.*$/.test(propName)) {
-        anElement.addEventListener(propName.substring(2).toLowerCase(), props[propName]);
-      } else {
-        anElement.setAttribute(propName, props[propName]);
-      }
-    });
+    if (props && props.ref) {
+      props.ref(anElement);
+    }
+    children.forEach(child => appendChild(anElement, child));
+    _.forEach(props, (value, name) => appendProp(anElement, name, value));
     return anElement;
   }
 
+  function appendChild(element, child) {
+    if (child.type === REACT_CLASS) {
+      appendChild(element, child.render());
+    } else if (Array.isArray(child)) {
+      child.forEach(ch => appendChild(element, ch));
+    } else if (typeof(child) === 'object') {
+      element.appendChild(child);
+    } else {
+      element.innerHTML += child;
+    }
+  }
+
+  /**
+   * Ce qui commence par on* au début : 
+   * On ajoute des eventListener
+   * Pour le reste on ajoute seulement l'attribut
+   * @param element 
+   * @param propName 
+   * @param propVal 
+   */
+  function appendProp(element, propName, propVal) {
+    if (shouldAddEventListener(propName)) {
+      element.addEventListener(propName.substring(2).toLowerCase(), propVal);
+    } else {
+      element.setAttribute(propName, propVal);
+    }
+  }
+
+  /**
+   * La classe component de base
+   * Une méthode setState() pour 
+   * mettre à jour l'état du 
+   * stateful component et re-render().
+   */
   class Component {
     constructor(props) {
       this.props = props;
     }
+
+    setState(state) {
+      this.state = Object.assign({}, this.state, state);
+      reRender();
+    }
+  }
+
+  function reRender() {
+    while (rootDOMElement.hasChildNodes()) {
+      rootDOMElement.removeChild(rootDOMElement.lastChild);
+    }
+    //Skip the root. It is only rendered once.
+    classCounter = 1;
+    ReactDOM.render(rootReactElement, rootDOMElement);
   }
 
   window.React = {
@@ -49,7 +138,10 @@
   };
   window.ReactDOM = {
     render: (el, domEl) => {
-      domEl.appendChild(el);
+      rootReactElement = el;
+      rootDOMElement = domEl;
+      const currentDOM = rootReactElement.render();
+      rootDOMElement.appendChild(currentDOM);
     }
   };
 })();
