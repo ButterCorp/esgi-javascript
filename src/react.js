@@ -4,6 +4,7 @@
   let classCounter = 0;
   const REACT_CLASS = 'REACT_CLASS';
 
+
   /**
    * Check le type d'élément injecté :
    * Si c'est une classe on appelle la méthode HandleClass
@@ -23,29 +24,6 @@
     }
   }
 
-  function type_check_v1(object, type) {
-    return typeof object === type;
-  }
-
-  function type_check_v2(object, type_object) {
-      var ok = true;
-      if (!type_check_v1(type_object.value, "undefined")) {
-          if (object != type_object.value) {
-              ok = false
-          }
-      }
-      if (!type_check_v1(type_object.type, "undefined")) {
-          if (!type_check_v1(object, type_object.type)) {
-              ok = false
-          }
-      }
-      if (!type_check_v1(type_object.enum, "undefined")) {
-          if (type_object.enum.indexOf(object) == -1) {
-              ok = false
-          }
-      }
-      return ok;
-  }
   function createElement(el, props, ...children) {
     return anElement(el, props, children);
   }
@@ -102,6 +80,9 @@
     if (shouldAddEventListener(propName)) {
       element.addEventListener(propName.substring(2).toLowerCase(), propVal);
     } else {
+      if (propName === 'className') {
+        propName = 'class';
+      }
       element.setAttribute(propName, propVal);
     }
   }
@@ -140,7 +121,7 @@
     render: (el, domEl) => {
       rootReactElement = el;
       rootDOMElement = domEl;
-      const currentDOM = rootReactElement.render();
+      const currentDOM = rootReactElement.type === REACT_CLASS ? rootReactElement.render() : rootReactElement;
       rootDOMElement.appendChild(currentDOM);
     }
   };

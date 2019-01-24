@@ -1,4 +1,4 @@
-class myButtonComponents extends React.Component {
+class MyButtonComponents extends React.Component {
 
     constructor(props) {
       super(props);
@@ -9,4 +9,4 @@ class myButtonComponents extends React.Component {
     }
  }
 
-module.exports = myButtonComponents;
+module.exports = MyButtonComponents;
