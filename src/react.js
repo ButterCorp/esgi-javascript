@@ -4,7 +4,6 @@
   let classCounter = 0;
   const REACT_CLASS = 'REACT_CLASS';
 
-
   /**
    * Check le type d'élément injecté :
    * Si c'est une classe on appelle la méthode HandleClass
@@ -40,12 +39,6 @@
     return reactElement;
   }
 
-  /**
-   * Tous 
-   * @param element 
-   * @param props 
-   * @param children 
-   */
   function handleHtmlElement(element, props, children) {
     const anElement = document.createElement(element);
     if (props && props.ref) {

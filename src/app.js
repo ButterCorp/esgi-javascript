@@ -8,7 +8,7 @@ const Title = ({ todoCount }) => {
       React.createElement(
         "h1",
         null,
-        "To-do list (",
+        "To-do (",
         todoCount,
         ")"
       )
@@ -68,8 +68,8 @@ class TodoApp extends React.Component {
     this.state = {
       data: []
     };
-  //  this.apiUrl = 'https://57b1924b46b57d1100a3c3f8.mockapi.io/api/todos';
-    axios.get([]).then(res => {
+    this.apiUrl = 'https://57b1924b46b57d1100a3c3f8.mockapi.io/api/todos';
+    axios.get(this.apiUrl).then(res => {
       // Set state with result
       this.setState({ data: res.data });
     });
@@ -113,6 +113,7 @@ class TodoApp extends React.Component {
 }
 
 /*
+
 class MyButton extends React.Component {
 
   constructor(props) {
@@ -179,6 +180,7 @@ ReactDOM.render(React.createElement(Root, null, null), document.getElementById('
 ReactDOM.render(React.createElement(Hello, {name: 'lolerki'}, null), document.getElementById('hello'));
 
 ReactDOM.render(React.createElement(MyButton, { onClick: () => alert('yay it worked') } ), document.getElementById('button'));
+
 */
 
 ReactDOM.render(React.createElement(TodoApp, null), document.getElementById('root'));
