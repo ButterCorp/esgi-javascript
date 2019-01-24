@@ -14,6 +14,29 @@
     }
   }
 
+  function type_check_v1(object, type) {
+    return typeof object === type;
+  }
+
+  function type_check_v2(object, type_object) {
+      var ok = true;
+      if (!type_check_v1(type_object.value, "undefined")) {
+          if (object != type_object.value) {
+              ok = false
+          }
+      }
+      if (!type_check_v1(type_object.type, "undefined")) {
+          if (!type_check_v1(object, type_object.type)) {
+              ok = false
+          }
+      }
+      if (!type_check_v1(type_object.enum, "undefined")) {
+          if (type_object.enum.indexOf(object) == -1) {
+              ok = false
+          }
+      }
+      return ok;
+  }
   function createElement(el, props, ...children) {
     return anElement(el, props, children);
   }
@@ -57,6 +80,12 @@
     }
   }
 
+  /**
+   * La classe component de base
+   * Une méthode setState() pour 
+   * mettre à jour l'état du 
+   * stateful component et re-render().
+   */
   class Component {
     constructor(props) {
       this.props = props;
