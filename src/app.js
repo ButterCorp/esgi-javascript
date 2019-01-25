@@ -112,7 +112,6 @@ class TodoApp extends React.Component {
   }
 }
 
-/*
 
 class MyButton extends React.Component {
 
@@ -175,13 +174,11 @@ class Root extends React.Component {
 }
 
 
-ReactDOM.render(React.createElement(Root, null, null), document.getElementById('count'));
+//ReactDOM.render(React.createElement(Root, null, null), document.getElementById('count'));
 
 ReactDOM.render(React.createElement(Hello, {name: 'lolerki'}, null), document.getElementById('hello'));
 
 ReactDOM.render(React.createElement(MyButton, { onClick: () => alert('yay it worked') } ), document.getElementById('button'));
-
-*/
 
 ReactDOM.render(React.createElement(TodoApp, null), document.getElementById('root'));
 
